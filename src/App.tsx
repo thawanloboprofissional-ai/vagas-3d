@@ -7,6 +7,7 @@ import { CadastroPage } from './pages/CadastroPage';
 import { EditarCarroPage } from './pages/EditarCarroPage';
 import { InicioPage } from './pages/InicioPage';
 import { TransferirCarroPage } from './pages/TransferirCarroPage';
+import { Mapa2DPage } from './pages/Mapa2DPage';
 
 function App() {
   const [status, setStatus] = useState<'checando' | 'ok' | 'erro'>('checando');
@@ -48,6 +49,7 @@ function App() {
         <Route path="/carro/:carroId/editar" element={<EditarCarroPage />} />
         <Route path="/inicio" element={<InicioPage />} />
         <Route path="/transferir/:carroId" element={<TransferirCarroPage />} />
+        <Route path="/mapa2d/:galpaoId" element={<Mapa2DPage />} />
         {/* demais rotas serão adicionadas nas próximas partes */}
       </Routes>
     </BrowserRouter>

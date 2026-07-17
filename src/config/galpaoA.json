@@ -1,0 +1,12 @@
+{
+  "galpao": "A",
+  "titulo": "Galpão A",
+  "total_vagas": 82,
+  "layout": {
+    "tipo": "grade_com_corredor",
+    "colunas_pares": [4, 6, 8, 10],
+    "colunas_impares": [1, 3],
+    "ruas_pares": ["B","C","D","E","F","G","H","I","J","L","M","N","O","P","Q","R"],
+    "ruas_impares": ["G","H","I","J","N","O","P","Q","R"]
+  }
+}

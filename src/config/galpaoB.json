@@ -1,0 +1,12 @@
+{
+  "galpao": "B",
+  "titulo": "Galpão B",
+  "total_vagas": 171,
+  "layout": {
+    "tipo": "grade_com_corredor",
+    "colunas_pares": [2, 4, 6, 8, 10, 12],
+    "colunas_impares": [1, 3, 5, 7, 9],
+    "ruas_pares": ["A","B","C","D","E","F","G","H","I","J","L","M","N","O","P","Q"],
+    "ruas_impares": ["A","B","C","D","E","F","G","H","J","L","M","N","O","P","Q"]
+  }
+}
