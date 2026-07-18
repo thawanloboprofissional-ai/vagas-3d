@@ -35,7 +35,9 @@ function calcularPosicoesVagas(vagas: Vaga[]): Posicao[] {
 export const Mapa2D = ({ vagas, onVagaClick }: { vagas: Vaga[]; onVagaClick: (id: string) => void }) => {
   const posicoes = calcularPosicoesVagas(vagas);
 
-  const bounds: LatLngBoundsExpression | undefined =
+  // Calcula automaticamente uma "caixa" que envolve todas as vagas, para o mapa
+  // se ajustar sozinho e preencher a tela, não importa se o galpão tem 82 ou 171 vagas.
+  const bounds: LatLngBoundsExpression =
     posicoes.length > 0
       ? [
           [Math.min(...posicoes.map((p) => p.y)) - 1, Math.min(...posicoes.map((p) => p.x)) - 1],
@@ -48,8 +50,8 @@ export const Mapa2D = ({ vagas, onVagaClick }: { vagas: Vaga[]; onVagaClick: (id
       bounds={bounds}
       style={{ height: '600px', width: '100%' }}
       crs={CRS.Simple}
-      minZoom={-4}
-      maxZoom={5}
+      minZoom={-5}
+      maxZoom={12}
     >
       {posicoes.map((p) => (
         <Rectangle
