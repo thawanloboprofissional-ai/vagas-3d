@@ -1,5 +1,5 @@
 import { MapContainer, Rectangle, Popup } from 'react-leaflet';
-import { CRS } from 'leaflet';
+import { CRS, LatLngBoundsExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 interface Vaga {
@@ -35,14 +35,21 @@ function calcularPosicoesVagas(vagas: Vaga[]): Posicao[] {
 export const Mapa2D = ({ vagas, onVagaClick }: { vagas: Vaga[]; onVagaClick: (id: string) => void }) => {
   const posicoes = calcularPosicoesVagas(vagas);
 
+  const bounds: LatLngBoundsExpression | undefined =
+    posicoes.length > 0
+      ? [
+          [Math.min(...posicoes.map((p) => p.y)) - 1, Math.min(...posicoes.map((p) => p.x)) - 1],
+          [Math.max(...posicoes.map((p) => p.y)) + 1, Math.max(...posicoes.map((p) => p.x)) + 1],
+        ]
+      : [[-1, -1], [1, 1]];
+
   return (
     <MapContainer
-      center={[0, 0]}
-      zoom={1}
+      bounds={bounds}
       style={{ height: '600px', width: '100%' }}
       crs={CRS.Simple}
-      minZoom={-2}
-      maxZoom={3}
+      minZoom={-4}
+      maxZoom={5}
     >
       {posicoes.map((p) => (
         <Rectangle
