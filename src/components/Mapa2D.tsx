@@ -1,14 +1,9 @@
 interface Vaga {
   id: string;
   codigo: string;
+  rua: string;
   status: string;
   carro_id: string | null;
-}
-
-interface Posicao {
-  vaga: Vaga;
-  x: number;
-  y: number;
 }
 
 function getColor(vaga: Vaga) {
@@ -17,52 +12,87 @@ function getColor(vaga: Vaga) {
   return '#16a34a';
 }
 
-// Função simplificada: distribui as vagas numa grade com base no índice.
-// Ajuste conforme o layout real de ruas/colunas do seu galpão.
-function calcularPosicoesVagas(vagas: Vaga[]): Posicao[] {
-  const colunas = 12;
-  return vagas.map((vaga, i) => ({
-    vaga,
-    x: i % colunas,
-    y: Math.floor(i / colunas),
-  }));
+// Extrai o número do final do código da vaga (ex: "B4" -> 4, "AJ5" -> 5)
+function extrairColuna(codigo: string): number {
+  const match = codigo.match(/(\d+)$/);
+  return match ? parseInt(match[1], 10) : 0;
 }
 
-export const Mapa2D = ({ vagas, onVagaClick }: { vagas: Vaga[]; onVagaClick: (id: string) => void }) => {
-  const posicoes = calcularPosicoesVagas(vagas);
-  const colunas = posicoes.length > 0 ? Math.max(...posicoes.map((p) => p.x)) + 1 : 1;
+export const Mapa2D = ({
+  vagas,
+  ordemRuas,
+  onVagaClick,
+}: {
+  vagas: Vaga[];
+  ordemRuas: string[];
+  onVagaClick: (id: string) => void;
+}) => {
+  // Agrupa as vagas por rua
+  const porRua = new Map<string, Vaga[]>();
+  vagas.forEach((v) => {
+    if (!porRua.has(v.rua)) porRua.set(v.rua, []);
+    porRua.get(v.rua)!.push(v);
+  });
+
+  // Ordena as ruas na ordem física real (ordemRuas); ruas não previstas vão para o final
+  const ruasOrdenadas = [
+    ...ordemRuas.filter((r) => porRua.has(r)),
+    ...[...porRua.keys()].filter((r) => !ordemRuas.includes(r)).sort(),
+  ];
+
+  const maxColuna = Math.max(1, ...vagas.map((v) => extrairColuna(v.codigo)));
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${colunas}, 1fr)`,
-        gap: '4px',
-        width: '100%',
-      }}
-    >
-      {posicoes.map((p) => (
-        <div
-          key={p.vaga.id}
-          onClick={() => onVagaClick(p.vaga.id)}
-          title={`${p.vaga.codigo} — ${p.vaga.status}`}
-          style={{
-            aspectRatio: '1 / 1',
-            backgroundColor: getColor(p.vaga),
-            borderRadius: '4px',
-            border: '1px solid #0B2545',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '10px',
-            color: 'white',
-            fontWeight: 600,
-          }}
-        >
-          {p.vaga.codigo}
-        </div>
-      ))}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+      {ruasOrdenadas.map((rua) => {
+        const vagasDaRua = [...(porRua.get(rua) || [])].sort(
+          (a, b) => extrairColuna(a.codigo) - extrairColuna(b.codigo)
+        );
+        return (
+          <div key={rua} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div style={{ width: '32px', fontWeight: 700, color: '#0B2545', textAlign: 'right' }}>
+              {rua}
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${maxColuna}, 1fr)`,
+                gap: '4px',
+                flex: 1,
+              }}
+            >
+              {Array.from({ length: maxColuna }, (_, i) => i + 1).map((coluna) => {
+                const vaga = vagasDaRua.find((v) => extrairColuna(v.codigo) === coluna);
+                if (!vaga) {
+                  return <div key={coluna} />;
+                }
+                return (
+                  <div
+                    key={vaga.id}
+                    onClick={() => onVagaClick(vaga.id)}
+                    title={`${vaga.codigo} — ${vaga.status}`}
+                    style={{
+                      aspectRatio: '1 / 1',
+                      backgroundColor: getColor(vaga),
+                      borderRadius: '4px',
+                      border: '1px solid #0B2545',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '10px',
+                      color: 'white',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {vaga.codigo}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
