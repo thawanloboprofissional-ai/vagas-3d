@@ -1,7 +1,3 @@
-import { MapContainer, Rectangle, Popup } from 'react-leaflet';
-import { CRS, LatLngBoundsExpression } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-
 interface Vaga {
   id: string;
   codigo: string;
@@ -24,7 +20,7 @@ function getColor(vaga: Vaga) {
 // Função simplificada: distribui as vagas numa grade com base no índice.
 // Ajuste conforme o layout real de ruas/colunas do seu galpão.
 function calcularPosicoesVagas(vagas: Vaga[]): Posicao[] {
-  const colunas = 10;
+  const colunas = 12;
   return vagas.map((vaga, i) => ({
     vaga,
     x: i % colunas,
@@ -34,38 +30,39 @@ function calcularPosicoesVagas(vagas: Vaga[]): Posicao[] {
 
 export const Mapa2D = ({ vagas, onVagaClick }: { vagas: Vaga[]; onVagaClick: (id: string) => void }) => {
   const posicoes = calcularPosicoesVagas(vagas);
-
-  // Calcula automaticamente uma "caixa" que envolve todas as vagas, para o mapa
-  // se ajustar sozinho e preencher a tela, não importa se o galpão tem 82 ou 171 vagas.
-  const bounds: LatLngBoundsExpression =
-    posicoes.length > 0
-      ? [
-          [Math.min(...posicoes.map((p) => p.y)) - 1, Math.min(...posicoes.map((p) => p.x)) - 1],
-          [Math.max(...posicoes.map((p) => p.y)) + 1, Math.max(...posicoes.map((p) => p.x)) + 1],
-        ]
-      : [[-1, -1], [1, 1]];
+  const colunas = posicoes.length > 0 ? Math.max(...posicoes.map((p) => p.x)) + 1 : 1;
 
   return (
-    <MapContainer
-      bounds={bounds}
-      style={{ height: '600px', width: '100%' }}
-      crs={CRS.Simple}
-      minZoom={-5}
-      maxZoom={12}
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${colunas}, 1fr)`,
+        gap: '4px',
+        width: '100%',
+      }}
     >
       {posicoes.map((p) => (
-        <Rectangle
+        <div
           key={p.vaga.id}
-          bounds={[[p.y - 0.4, p.x - 0.4], [p.y + 0.4, p.x + 0.4]]}
-          pathOptions={{ fillColor: getColor(p.vaga), fillOpacity: 0.8, color: '#0B2545', weight: 1 }}
-          eventHandlers={{ click: () => onVagaClick(p.vaga.id) }}
+          onClick={() => onVagaClick(p.vaga.id)}
+          title={`${p.vaga.codigo} — ${p.vaga.status}`}
+          style={{
+            aspectRatio: '1 / 1',
+            backgroundColor: getColor(p.vaga),
+            borderRadius: '4px',
+            border: '1px solid #0B2545',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '10px',
+            color: 'white',
+            fontWeight: 600,
+          }}
         >
-          <Popup>
-            <strong>{p.vaga.codigo}</strong>
-            <p>Status: {p.vaga.status}</p>
-          </Popup>
-        </Rectangle>
+          {p.vaga.codigo}
+        </div>
       ))}
-    </MapContainer>
+    </div>
   );
 };
