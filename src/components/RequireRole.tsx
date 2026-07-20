@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { usePerfil } from '../context/PerfilContext';
 
 interface RequireRoleProps {
