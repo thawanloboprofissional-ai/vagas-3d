@@ -2,12 +2,17 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { MapaGrade } from '../components/MapaGrade';
-import { layoutGalpaoA, layoutGalpaoB, layoutGalpaoD } from '../config/layoutsGalpoes';
+import { MapaBlocos } from '../components/MapaBlocos';
+import { layoutGalpaoA, layoutGalpaoB, layoutGalpaoD, layoutMG3_1Piso } from '../config/layoutsGalpoes';
 
-const layouts: Record<string, any> = {
+const layoutsLinha: Record<string, any> = {
   A: layoutGalpaoA,
   B: layoutGalpaoB,
   D: layoutGalpaoD,
+};
+
+const layoutsBlocos: Record<string, any> = {
+  MG3_1PISO: layoutMG3_1Piso,
 };
 
 export const Mapa2DPage = () => {
@@ -48,17 +53,20 @@ export const Mapa2DPage = () => {
     carregarVagas();
   };
 
-  const linhas = galpaoId ? layouts[galpaoId] : null;
+  const linhas = galpaoId ? layoutsLinha[galpaoId] : null;
+  const blocos = galpaoId ? layoutsBlocos[galpaoId] : null;
 
   return (
     <div className="p-6">
       <Link to="/galpoes" className="text-sm text-mro-azul mb-4 inline-block">← Voltar para Galpões</Link>
       <h1 className="text-lg font-bold text-mro-azul mb-4">Galpão {galpaoId} — Mapa de Vagas</h1>
       {erro && <p className="text-red-600 text-sm mb-3">{erro}</p>}
-      {!linhas ? (
-        <p className="text-gray-400">Layout não configurado para este galpão.</p>
-      ) : (
+      {linhas ? (
         <MapaGrade linhas={linhas} vagas={vagas} onMoverCarro={handleMoverCarro} />
+      ) : blocos ? (
+        <MapaBlocos layout={blocos} vagas={vagas} onMoverCarro={handleMoverCarro} />
+      ) : (
+        <p className="text-gray-400">Layout não configurado para este galpão.</p>
       )}
     </div>
   );
