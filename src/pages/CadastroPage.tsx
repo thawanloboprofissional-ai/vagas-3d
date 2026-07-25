@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import logoPrincipal from '../assets/logos/logo-principal.png';
 
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validarMatricula = (m: string) => /^[A-Z0-9-]+$/.test(m) && m.length >= 4;
@@ -57,8 +58,10 @@ export const CadastroPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-mro-azul to-mro-azul-claro">
       <form onSubmit={handleCadastro} className="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl">
-        <h1 className="text-xl font-bold text-mro-azul mb-1">📋 CRIAR CONTA</h1>
-        <p className="text-gray-500 text-sm mb-6">Preencha os dados para acessar</p>
+        <div className="flex justify-center mb-2">
+          <img src={logoPrincipal} alt="MRO" className="h-10 w-auto" />
+        </div>
+        <p className="text-gray-500 text-sm text-center mb-6">Criar conta</p>
 
         {erro && <p className="text-red-600 text-sm mb-4">{erro}</p>}
 

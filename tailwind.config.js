@@ -4,8 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'mro-azul': '#0B2545',
-        'mro-azul-claro': '#1a3a6a',
+        'mro-azul': '#001A70',
+        'mro-azul-claro': '#0B2545',
+        'mro-verde': '#00CE7C',
       },
     },
   },

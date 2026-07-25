@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import logoPrincipal from '../assets/logos/logo-principal.png';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -27,7 +28,9 @@ export const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-mro-azul to-mro-azul-claro">
       <form onSubmit={handleLogin} className="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl">
-        <h1 className="text-2xl font-bold text-mro-azul text-center mb-1">MRO</h1>
+        <div className="flex justify-center mb-2">
+          <img src={logoPrincipal} alt="MRO" className="h-12 w-auto" />
+        </div>
         <p className="text-gray-500 text-center mb-6">Sistema de Gestão de Vagas</p>
 
         {erro && <p className="text-red-600 text-sm mb-4">{erro}</p>}

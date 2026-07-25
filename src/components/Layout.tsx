@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { PerfilProvider, usePerfil } from '../context/PerfilContext';
+import logoNegativo from '../assets/logos/logo-negativo-branco.png';
 
 const LayoutInner = () => {
   const navigate = useNavigate();
@@ -27,14 +28,16 @@ const LayoutInner = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="md:hidden flex items-center justify-between bg-mro-azul px-4 py-3">
-        <h1 className="text-white font-bold text-lg">MRO</h1>
+        <img src={logoNegativo} alt="MRO" className="h-6 w-auto" />
         <button onClick={() => setMenuAberto((v) => !v)} className="text-white text-2xl leading-none px-2 py-1" aria-label="Abrir menu">
           {menuAberto ? '✕' : '☰'}
         </button>
       </div>
 
       <aside className={`${menuAberto ? 'block' : 'hidden'} md:block w-full md:w-56 bg-mro-azul flex-col p-4 md:flex md:min-h-screen`}>
-        <h1 className="hidden md:block text-white font-bold text-lg mb-6">MRO</h1>
+        <div className="hidden md:flex mb-6 px-1">
+          <img src={logoNegativo} alt="MRO" className="h-8 w-auto" />
+        </div>
         <nav className="flex-1">
           <Link to="/inicio" className={linkClasses('/inicio')} onClick={fecharMenu}>🏠 Painel Geral</Link>
           <Link to="/dashboard" className={linkClasses('/dashboard')} onClick={fecharMenu}>📊 Dashboard</Link>
