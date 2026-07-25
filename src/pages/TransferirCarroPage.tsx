@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { SearchableSelect } from '../components/SearchableSelect';
 
 export const TransferirCarroPage = () => {
   const { carroId } = useParams();
@@ -31,7 +32,11 @@ export const TransferirCarroPage = () => {
   }, [carroId]);
 
   useEffect(() => {
-    if (tipoDestino !== 'vaga' || !galpaoDestino) return;
+    setVagaDestino('');
+    if (tipoDestino !== 'vaga' || !galpaoDestino) {
+      setVagasLivres([]);
+      return;
+    }
     supabase
       .from('vagas')
       .select('*')
@@ -69,6 +74,14 @@ export const TransferirCarroPage = () => {
     if (error) return setErro(error.message);
     navigate('/inicio');
   };
+
+  const opcoesGalpoes = galpoes.map((g) => ({ value: g.id, label: g.nome }));
+  const opcoesVagas = vagasLivres.map((v) => ({
+    value: v.id,
+    label: v.codigo,
+    sublabel: `Rua ${v.rua}`,
+  }));
+  const opcoesLocaisExternos = locaisExternos.map((l) => ({ value: l.id, label: l.nome }));
 
   if (carregandoCarro) {
     return <div className="p-6 text-center text-gray-400">Carregando...</div>;
@@ -113,34 +126,43 @@ export const TransferirCarroPage = () => {
       {tipoDestino === 'vaga' ? (
         <>
           <label className="block text-sm mb-1">🎯 Galpão Destino</label>
-          <select value={galpaoDestino} onChange={(e) => setGalpaoDestino(e.target.value)} className="w-full border rounded px-3 py-2 mb-4">
-            <option value="">Selecione...</option>
-            {galpoes.map((g) => (
-              <option key={g.id} value={g.id}>{g.nome}</option>
-            ))}
-          </select>
+          <div className="mb-4">
+            <SearchableSelect
+              options={opcoesGalpoes}
+              value={galpaoDestino}
+              onChange={setGalpaoDestino}
+              placeholder="Buscar galpão..."
+            />
+          </div>
 
           {galpaoDestino && (
             <>
-              <label className="block text-sm mb-1">Vaga Destino (livres)</label>
-              <select value={vagaDestino} onChange={(e) => setVagaDestino(e.target.value)} className="w-full border rounded px-3 py-2 mb-4">
-                <option value="">Selecione...</option>
-                {vagasLivres.map((v) => (
-                  <option key={v.id} value={v.id}>Rua {v.rua} · {v.codigo}</option>
-                ))}
-              </select>
+              <label className="block text-sm mb-1">
+                Vaga Destino ({vagasLivres.length} livres) — digite o código ou a rua
+              </label>
+              <div className="mb-4">
+                <SearchableSelect
+                  options={opcoesVagas}
+                  value={vagaDestino}
+                  onChange={setVagaDestino}
+                  placeholder="Ex: R4, Rua B..."
+                  emptyMessage="Nenhuma vaga livre encontrada com esse termo"
+                />
+              </div>
             </>
           )}
         </>
       ) : (
         <>
           <label className="block text-sm mb-1">📍 Local Externo</label>
-          <select value={localDestino} onChange={(e) => setLocalDestino(e.target.value)} className="w-full border rounded px-3 py-2 mb-4">
-            <option value="">Selecione...</option>
-            {locaisExternos.map((l) => (
-              <option key={l.id} value={l.id}>{l.nome}</option>
-            ))}
-          </select>
+          <div className="mb-1">
+            <SearchableSelect
+              options={opcoesLocaisExternos}
+              value={localDestino}
+              onChange={setLocalDestino}
+              placeholder="Buscar local externo..."
+            />
+          </div>
           <p className="text-xs text-gray-400 mb-4">
             Esses locais não têm limite de vagas — vários carros podem ficar no mesmo local ao mesmo tempo.
           </p>
