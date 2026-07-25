@@ -40,6 +40,7 @@ const LayoutInner = () => {
         </div>
         <nav className="flex-1">
           <Link to="/inicio" className={linkClasses('/inicio')} onClick={fecharMenu}>🏠 Painel Geral</Link>
+          <Link to="/busca-lote" className={linkClasses('/busca-lote')} onClick={fecharMenu}>🧾 Busca em Lote</Link>
           <Link to="/dashboard" className={linkClasses('/dashboard')} onClick={fecharMenu}>📊 Dashboard</Link>
           <Link to="/galpoes" className={linkClasses('/galpoes')} onClick={fecharMenu}>🏭 Galpões</Link>
           <Link to="/mapa2d" className={linkClasses('/mapa2d')} onClick={fecharMenu}>🗺️ Mapas</Link>

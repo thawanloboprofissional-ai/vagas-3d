@@ -15,6 +15,7 @@ import { LocaisExternosPage } from './pages/LocaisExternosPage';
 import { AuditoriaCarrosPage } from './pages/AuditoriaCarrosPage';
 import { ManutencaoPage } from './pages/ManutencaoPage';
 import { UsuariosPage } from './pages/UsuariosPage';
+import { BuscaLotePage } from './pages/BuscaLotePage';
 import { Layout } from './components/Layout';
 import { RequireRole } from './components/RequireRole';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -60,6 +61,7 @@ function App() {
 
           <Route element={<Layout />}>
             <Route path="/inicio" element={<InicioPage />} />
+            <Route path="/busca-lote" element={<BuscaLotePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/galpoes" element={<GalpoesPage />} />
             <Route path="/mapa2d/:galpaoId" element={<Mapa2DPage />} />
