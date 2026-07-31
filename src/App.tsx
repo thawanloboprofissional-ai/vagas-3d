@@ -16,6 +16,7 @@ import { AuditoriaCarrosPage } from './pages/AuditoriaCarrosPage';
 import { ManutencaoPage } from './pages/ManutencaoPage';
 import { UsuariosPage } from './pages/UsuariosPage';
 import { BuscaLotePage } from './pages/BuscaLotePage';
+import { CarrosPage } from './pages/CarrosPage';
 import { Layout } from './components/Layout';
 import { RequireRole } from './components/RequireRole';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -67,6 +68,14 @@ function App() {
             <Route path="/mapa2d/:galpaoId" element={<Mapa2DPage />} />
             <Route path="/locais-externos" element={<LocaisExternosPage />} />
             <Route path="/manutencao" element={<ManutencaoPage />} />
+            <Route
+              path="/carros"
+              element={
+                <RequireRole allowed={['admin']}>
+                  <CarrosPage />
+                </RequireRole>
+              }
+            />
             <Route
               path="/usuarios"
               element={

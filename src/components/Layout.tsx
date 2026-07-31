@@ -10,6 +10,7 @@ const LayoutInner = () => {
   const [menuAberto, setMenuAberto] = useState(false);
   const { perfil } = usePerfil();
   const podeGerenciar = perfil === 'admin' || perfil === 'supervisor';
+  const ehAdmin = perfil === 'admin';
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -46,6 +47,9 @@ const LayoutInner = () => {
           <Link to="/mapa2d" className={linkClasses('/mapa2d')} onClick={fecharMenu}>🗺️ Mapas</Link>
           <Link to="/locais-externos" className={linkClasses('/locais-externos')} onClick={fecharMenu}>📍 Locais Externos</Link>
           <Link to="/manutencao" className={linkClasses('/manutencao')} onClick={fecharMenu}>🔧 Manutenção</Link>
+          {ehAdmin && (
+            <Link to="/carros" className={linkClasses('/carros')} onClick={fecharMenu}>🚗 Carros</Link>
+          )}
           {podeGerenciar && (
             <>
               <Link to="/usuarios" className={linkClasses('/usuarios')} onClick={fecharMenu}>👥 Usuários</Link>
