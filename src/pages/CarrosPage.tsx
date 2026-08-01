@@ -8,7 +8,6 @@ interface Carro {
   descricao: string | null;
   status: string;
   em_manutencao: boolean;
-  ativo: boolean;
   ultima_atualizacao: string | null;
 }
 
@@ -39,7 +38,7 @@ export const CarrosPage = () => {
   const [salvando, setSalvando] = useState(false);
 
   // campos do formulário
-  const [numeroSerie, setNumeroSerie] = useState('');
+  const [codigo, setCodigo] = useState('');
   const [descricao, setDescricao] = useState('');
 
   const carregar = useCallback(() => {
@@ -50,7 +49,7 @@ export const CarrosPage = () => {
       .order('codigo')
       .then(({ data, error }) => {
         if (error) setErro('Erro ao carregar carros: ' + error.message);
-        else setCarros((data || []).map((c: any) => ({ ...c, ativo: c.status !== 'inativo' })));
+        else setCarros(data || []);
         setCarregando(false);
       });
   }, []);
@@ -64,15 +63,19 @@ export const CarrosPage = () => {
     setErro('');
     setSucesso('');
 
-    const num = numeroSerie.trim();
-    if (!num || isNaN(Number(num)) || Number(num) < 1) {
-      setErro('Digite um número de série válido (somente números, ex: 0001).');
+    const codigoLimpo = codigo.trim();
+    if (!codigoLimpo) {
+      setErro('Digite o código do carro.');
+      return;
+    }
+    if (codigoLimpo.length > 5) {
+      setErro('O código deve ter no máximo 5 caracteres.');
       return;
     }
 
     setSalvando(true);
     const { data, error } = await supabase.rpc('criar_carro', {
-      p_numero_serie: num,
+      p_numero_serie: codigoLimpo,
       p_descricao: descricao.trim() || null,
     });
     setSalvando(false);
@@ -82,8 +85,8 @@ export const CarrosPage = () => {
       return;
     }
 
-    setSucesso(`Carro ${data.codigo} cadastrado com sucesso!`);
-    setNumeroSerie('');
+    setSucesso(`Carro "${data.codigo}" cadastrado com sucesso!`);
+    setCodigo('');
     setDescricao('');
     setMostrarForm(false);
     carregar();
@@ -131,28 +134,24 @@ export const CarrosPage = () => {
       {/* Formulário de criação */}
       {mostrarForm && (
         <div className="bg-white rounded-xl shadow p-5 mb-6">
-          <h2 className="font-semibold text-mro-azul mb-4">Cadastrar novo carro</h2>
+          <h2 className="font-semibold text-mro-azul mb-1">Cadastrar novo carro</h2>
+          <p className="text-xs text-gray-400 mb-4">
+            O código pode ter até 5 caracteres (ex: <strong>123</strong>, <strong>10040</strong>, <strong>AB001</strong>).
+          </p>
           <form onSubmit={handleCriar}>
             <div className="flex flex-wrap gap-4 items-end">
-              <div className="flex-1 min-w-[160px]">
-                <label className="block text-sm text-gray-600 mb-1">
-                  Número de série <span className="text-gray-400">(só os números)</span>
-                </label>
-                <div className="flex items-center border rounded overflow-hidden">
-                  <span className="bg-gray-100 text-gray-500 px-3 py-2 text-sm select-none border-r">
-                    C1-
-                  </span>
-                  <input
-                    value={numeroSerie}
-                    onChange={(e) => setNumeroSerie(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                    placeholder="0001"
-                    maxLength={4}
-                    className="flex-1 px-3 py-2 text-sm outline-none"
-                    required
-                  />
-                </div>
+              <div className="min-w-[160px]">
+                <label className="block text-sm text-gray-600 mb-1">Código do carro</label>
+                <input
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value.slice(0, 5))}
+                  placeholder="Ex: 10040"
+                  maxLength={5}
+                  className="w-full border rounded px-3 py-2 text-sm"
+                  required
+                />
                 <p className="text-xs text-gray-400 mt-1">
-                  Ficará salvo como: <strong>C1-{numeroSerie.padStart(4, '0') || '0001'}</strong>
+                  {codigo.trim().length}/5 caracteres
                 </p>
               </div>
               <div className="flex-1 min-w-[200px]">
@@ -262,7 +261,7 @@ export const CarrosPage = () => {
                           🔄
                         </button>
                         <button
-                          onClick={() => navigate(`/auditoria-carros?carro=${c.id}`)}
+                          onClick={() => navigate(`/auditoria-carros`)}
                           title="Ver histórico"
                           className="p-1.5 rounded hover:bg-gray-100 text-lg"
                         >
