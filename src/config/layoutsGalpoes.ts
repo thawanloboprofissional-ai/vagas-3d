@@ -21,8 +21,8 @@ function vazio(): CelulaLayout {
 }
 
 // ============ GALPÃO A ============
-const ruasA = ['R', 'Q', 'P', 'O', 'N', 'M', 'L', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B'];
-const ruasA_comImpares = new Set(['R', 'Q', 'P', 'O', 'N', 'J', 'I', 'H', 'G']);
+const ruasA = ['R','Q','P','O','N','M','L','J','I','H','G','F','E','D','C','B'];
+const ruasA_comImpares = new Set(['R','Q','P','O','N','J','I','H','G']);
 
 export const layoutGalpaoA: LinhaLayout[] = ruasA.map((rua) => ({
   rua,
@@ -35,7 +35,7 @@ export const layoutGalpaoA: LinhaLayout[] = ruasA.map((rua) => ({
 }));
 
 // ============ GALPÃO B ============
-const ruasB = ['Q', 'P', 'O', 'N', 'M', 'L', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'];
+const ruasB = ['Q','P','O','N','M','L','J','I','H','G','F','E','D','C','B','A'];
 
 export const layoutGalpaoB: LinhaLayout[] = ruasB.map((rua) => ({
   rua,
@@ -48,8 +48,8 @@ export const layoutGalpaoB: LinhaLayout[] = ruasB.map((rua) => ({
 // ============ GALPÃO D ============
 const ruasD_topo = ['AL','AJ','AI','AH','AG','AF','AE','AD','AC','AB','AA','Z','X','V','U','T','S','R','Q','P','O','N','M','L'];
 const ruasD_baixo = ['A','B','C','D','E','F','G','H','I','J'];
-const brigadaD = new Set(['AA', 'S']);
-const apenasCol5D = new Set(['AL', 'AJ']);
+const brigadaD = new Set(['AA','S']);
+const apenasCol5D = new Set(['AL','AJ']);
 
 function linhaD(rua: string, gapAntes?: string): LinhaLayout {
   const esquerda = brigadaD.has(rua)
@@ -100,10 +100,10 @@ function blocoDaN(rua: string): BlocoRua {
   };
 }
 
-const gruposDireitaMG3 = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
+const gruposDireitaMG3 = ['D','E','F','G','H','I','J','K','L','M','N'];
 
 export const layoutMG3_1Piso: LayoutBlocos = {
-  grupoEsquerdo: ['C', 'B', 'A'],
+  grupoEsquerdo: ['C','B','A'],
   grupoDireito: gruposDireitaMG3,
   blocos: {
     A: blocoABC('A'),
