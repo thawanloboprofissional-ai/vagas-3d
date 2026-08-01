@@ -45,36 +45,62 @@ export const layoutGalpaoB: LinhaLayout[] = ruasB.map((rua) => ({
   direita: [2, 4, 6, 8, 10, 12].map((c) => vaga(rua, c)),
 }));
 
-// ============ GALPÃO D ============
-const ruasD_topo = ['AL', 'AJ', 'AI', 'AH', 'AG', 'AF', 'AE', 'AD', 'AC', 'AB', 'AA', 'Z', 'X', 'V', 'U', 'T', 'S', 'R', 'Q', 'P', 'O', 'N', 'M', 'L'];
-const ruasD_baixo = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+// ============ GALPÃO D — LAYOUT DEITADO ============
+// Cada "coluna" é uma rua. As vagas são exibidas de cima pra baixo.
+// Pares ficam acima do corredor, ímpares abaixo.
+
+export interface ColunaDeitada {
+  rua: string;
+  cima: CelulaLayout[];   // vagas pares (de cima)
+  baixo: CelulaLayout[];  // vagas ímpares (de baixo)
+}
+
+export interface LayoutDeitado {
+  colunas: ColunaDeitada[];
+}
+
 const brigadaD = new Set(['AA', 'S']);
 const apenasCol5D = new Set(['AL', 'AJ']);
 
-function linhaD(rua: string, gapAntes?: string): LinhaLayout {
-  const esquerda = brigadaD.has(rua)
-    ? [bloqueio('BRIGADA'), bloqueio('BRIGADA')]
-    : [4, 2].map((c) => vaga(rua, c));
-  const direita = apenasCol5D.has(rua)
-    ? [vazio(), vazio(), vaga(rua, 5)]
-    : [1, 3, 5].map((c) => vaga(rua, c));
-  return { rua, esquerda, direita, gapAntes };
-}
-
-export const layoutGalpaoD: LinhaLayout[] = [
-  ...ruasD_topo.map((rua) => linhaD(rua)),
-  ...ruasD_baixo.map((rua, i) => linhaD(rua, i === 0 ? 'ENTRADA' : undefined)),
+const ruasD_todas = [
+  'L','M','N','O','P','Q','R','S','T','U','V','X','Z',
+  'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AL',
+  'A','B','C','D','E','F','G','H','I','J',
 ];
 
-// ============ MG3 1° PISO (layout em blocos 3x3) ============
+export const layoutGalpaoD_deitado: LayoutDeitado = {
+  colunas: ruasD_todas.map((rua): ColunaDeitada => {
+    if (brigadaD.has(rua)) {
+      return {
+        rua,
+        cima: [bloqueio('BRIGADA'), bloqueio('BRIGADA')],
+        baixo: [bloqueio('BRIGADA'), bloqueio('BRIGADA'), bloqueio('BRIGADA')],
+      };
+    }
+    if (apenasCol5D.has(rua)) {
+      return {
+        rua,
+        cima: [vazio(), vazio()],
+        baixo: [vazio(), vazio(), vaga(rua, 5)],
+      };
+    }
+    return {
+      rua,
+      cima: [vaga(rua, 4), vaga(rua, 2)],
+      baixo: [vaga(rua, 1), vaga(rua, 3), vaga(rua, 5)],
+    };
+  }),
+};
+
+// ============ MG3 1° PISO ============
 export interface BlocoRua {
   rua: string;
-  linhas: string[][]; // 3 linhas (topo, meio, base), cada uma com os códigos da esquerda pra direita
+  linhas: string[][];
 }
 
 export interface LayoutBlocos {
-  grupoEsquerdo: string[]; // ruas empilhadas verticalmente, topo pra base
-  grupoDireito: string[]; // ruas lado a lado, esquerda pra direita
+  grupoEsquerdo: string[];
+  grupoDireito: string[];
   blocos: Record<string, BlocoRua>;
 }
 

@@ -2,13 +2,22 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { MapaGrade } from '../components/MapaGrade';
+import { MapaGradeDeitado } from '../components/MapaGradeDeitado';
 import { MapaBlocos } from '../components/MapaBlocos';
-import { layoutGalpaoA, layoutGalpaoB, layoutGalpaoD, layoutMG3_1Piso } from '../config/layoutsGalpoes';
+import {
+  layoutGalpaoA,
+  layoutGalpaoB,
+  layoutGalpaoD_deitado,
+  layoutMG3_1Piso,
+} from '../config/layoutsGalpoes';
 
 const layoutsLinha: Record<string, any> = {
   A: layoutGalpaoA,
   B: layoutGalpaoB,
-  D: layoutGalpaoD,
+};
+
+const layoutsDeitado: Record<string, any> = {
+  D: layoutGalpaoD_deitado,
 };
 
 const layoutsBlocos: Record<string, any> = {
@@ -27,17 +36,12 @@ export const Mapa2DPage = () => {
       .select('*, carros!vagas_carro_id_fkey(codigo)')
       .eq('galpao_id', galpaoId)
       .then(({ data, error }) => {
-        if (error) {
-          setErro('Erro ao carregar vagas: ' + error.message);
-          return;
-        }
+        if (error) { setErro('Erro ao carregar vagas: ' + error.message); return; }
         setVagas((data || []).map((v: any) => ({ ...v, carro_codigo: v.carros?.codigo || null })));
       });
   }, [galpaoId]);
 
-  useEffect(() => {
-    carregarVagas();
-  }, [carregarVagas]);
+  useEffect(() => { carregarVagas(); }, [carregarVagas]);
 
   const handleMoverCarro = async (carroId: string, _origem: string, destino: string) => {
     setErro('');
@@ -46,23 +50,23 @@ export const Mapa2DPage = () => {
       p_vaga_destino_id: destino,
       p_motivo: 'Movido pelo mapa',
     });
-    if (error) {
-      setErro('Erro ao mover carro: ' + error.message);
-      return;
-    }
+    if (error) { setErro('Erro ao mover carro: ' + error.message); return; }
     carregarVagas();
   };
 
   const linhas = galpaoId ? layoutsLinha[galpaoId] : null;
+  const deitado = galpaoId ? layoutsDeitado[galpaoId] : null;
   const blocos = galpaoId ? layoutsBlocos[galpaoId] : null;
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <Link to="/galpoes" className="text-sm text-mro-azul mb-4 inline-block">← Voltar para Galpões</Link>
       <h1 className="text-lg font-bold text-mro-azul mb-4">Galpão {galpaoId} — Mapa de Vagas</h1>
       {erro && <p className="text-red-600 text-sm mb-3">{erro}</p>}
       {linhas ? (
         <MapaGrade linhas={linhas} vagas={vagas} onMoverCarro={handleMoverCarro} />
+      ) : deitado ? (
+        <MapaGradeDeitado layout={deitado} vagas={vagas} onMoverCarro={handleMoverCarro} />
       ) : blocos ? (
         <MapaBlocos layout={blocos} vagas={vagas} onMoverCarro={handleMoverCarro} />
       ) : (
