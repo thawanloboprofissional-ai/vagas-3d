@@ -20,6 +20,9 @@ const layoutsBlocos: Record<string, any> = {
   MG3_1PISO: layoutMG3_1Piso,
 };
 
+// Galpões que devem ser renderizados deitados
+const GALPOES_DEITADOS = new Set(['D']);
+
 export const Mapa2DPage = () => {
   const { galpaoId } = useParams();
   const [vagas, setVagas] = useState<any[]>([]);
@@ -52,6 +55,7 @@ export const Mapa2DPage = () => {
 
   const linhas = galpaoId ? layoutsLinha[galpaoId] : null;
   const blocos = galpaoId ? layoutsBlocos[galpaoId] : null;
+  const deitado = galpaoId ? GALPOES_DEITADOS.has(galpaoId) : false;
 
   return (
     <div className="p-4 md:p-6">
@@ -59,7 +63,7 @@ export const Mapa2DPage = () => {
       <h1 className="text-lg font-bold text-mro-azul mb-4">Galpão {galpaoId} — Mapa de Vagas</h1>
       {erro && <p className="text-red-600 text-sm mb-3">{erro}</p>}
       {linhas ? (
-        <MapaGrade linhas={linhas} vagas={vagas} onMoverCarro={handleMoverCarro} />
+        <MapaGrade linhas={linhas} vagas={vagas} onMoverCarro={handleMoverCarro} deitado={deitado} />
       ) : blocos ? (
         <MapaBlocos layout={blocos} vagas={vagas} onMoverCarro={handleMoverCarro} />
       ) : (
