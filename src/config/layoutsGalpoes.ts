@@ -46,40 +46,18 @@ export const layoutGalpaoB: LinhaLayout[] = ruasB.map((rua) => ({
 }));
 
 // ============ GALPÃO D ============
-// Layout fiel ao JSON oficial
-// Esquerda = pares [4, 2] (de fora pra dentro do corredor)
-// Direita  = ímpares [1, 3, 5] (do corredor pra fora)
-// AA e S: posições pares são BRIGADA
-// AJ e AL: ímpares só têm coluna 5
-
-const ruasD_topo = [
-  'AL','AJ','AI','AH','AG','AF','AE','AD',
-  'AC','AB','AA','Z','X','V','U','T','S',
-  'R','Q','P','O','N','M','L',
-];
+const ruasD_topo = ['AL','AJ','AI','AH','AG','AF','AE','AD','AC','AB','AA','Z','X','V','U','T','S','R','Q','P','O','N','M','L'];
 const ruasD_baixo = ['A','B','C','D','E','F','G','H','I','J'];
-
 const brigadaD = new Set(['AA','S']);
-const apenasCol5D = new Set(['AJ','AL']);
+const apenasCol5D = new Set(['AL','AJ']);
 
 function linhaD(rua: string, gapAntes?: string): LinhaLayout {
-  // ESQUERDA: pares [4, 2]
-  let esquerda: CelulaLayout[];
-  if (brigadaD.has(rua)) {
-    esquerda = [bloqueio('BRIGADA'), bloqueio('BRIGADA')];
-  } else {
-    esquerda = [vaga(rua, 4), vaga(rua, 2)];
-  }
-
-  // DIREITA: ímpares [1, 3, 5]
-  let direita: CelulaLayout[];
-  if (apenasCol5D.has(rua)) {
-    // AJ e AL: só coluna 5, as outras são vazias
-    direita = [vazio(), vazio(), vaga(rua, 5)];
-  } else {
-    direita = [vaga(rua, 1), vaga(rua, 3), vaga(rua, 5)];
-  }
-
+  const esquerda = brigadaD.has(rua)
+    ? [bloqueio('BRIGADA'), bloqueio('BRIGADA')]
+    : [4, 2].map((c) => vaga(rua, c));
+  const direita = apenasCol5D.has(rua)
+    ? [vazio(), vazio(), vaga(rua, 5)]
+    : [1, 3, 5].map((c) => vaga(rua, c));
   return { rua, esquerda, direita, gapAntes };
 }
 
